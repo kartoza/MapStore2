@@ -12,7 +12,9 @@ import {
     startDrawingFeature,
     deleteGeometry,
     openAdvancedSearch,
-    zoomAll
+    zoomAll,
+    downloadIGRACData,
+    finishDownloadingIGRACData
 } from '../../actions/featuregrid';
 
 import { toggleSyncWms } from '../../actions/wfsquery';
@@ -34,5 +36,7 @@ export default {
     sync: () => toggleSyncWms(),
     setTimeSync,
     hideSyncPopover: () => hideSyncPopover(),
-    toggleShowAgain: () => toggleShowAgain()
+    toggleShowAgain: () => toggleShowAgain(),
+    downloadIGRACData: () => downloadIGRACData(),
+    finishDownloadingIGRACData: () => finishDownloadingIGRACData()
 };

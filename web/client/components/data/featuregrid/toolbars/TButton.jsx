@@ -22,7 +22,7 @@ export const SimpleTButton = forwardRef(({ disabled, id, visible, onClick, glyph
         style={getStyle(visible)}
         className={className}
         onClick={() => !disabled && onClick()}>
-        <Glyphicon glyph={glyph} />
+        {loading ? <div className="toc-inline-loader"></div> : <Glyphicon glyph={glyph}/>}
     </Button>);
 });
 

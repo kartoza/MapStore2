@@ -163,7 +163,17 @@ const standardButtons = {
         visible={showTimeSyncButton}
         active={timeSync}
         onClick={() => events.setTimeSync && events.setTimeSync(!timeSync)}
-        glyph="time" />)
+        glyph="time" />),
+    gridIgracDownload: ({isIGRACDownloading, isIGRACDownloadAllowed, selectedCount, events = {}}) => (<TButton
+            id="grid-igrac-download"
+            keyProp="grid-igrac-download"
+            tooltipId="featuregrid.toolbar.downloadIGRACData"
+            disabled={isIGRACDownloading}
+            active={!isIGRACDownloading}
+            visible={selectedCount <= 1 && mode === "VIEW" && isIGRACDownloadAllowed}
+            onClick={() => events.downloadIGRACData && events.downloadIGRACData()}
+            loading={isIGRACDownloading}
+            glyph="features-grid-download"/>),
 };
 
 // standard buttons with position set to index in this array. shape {name, Component, position} is aligned with attributes expected from tools injected.
@@ -182,7 +192,8 @@ const buttons = [
     // note: `syncGridFilterToMap` needs to stay at the end of the toolbar because of a bug. The tooltip active forces this button to be at the end (see #7271)
     // so to avoid a replacement after the button closes, we need to put it at the end, until the bug is solved.
     {name: "syncGridFilterToMap", position: 1000, Component: standardButtons.syncGridFilterToMap}, // GRID
-    {name: "syncTimeParameter", Component: standardButtons.syncTimeParameter} // GRID (generic functionality not mandatory related to timeline)
+    {name: "syncTimeParameter", Component: standardButtons.syncTimeParameter}, // GRID (generic functionality not mandatory related to timeline)
+    {name: "gridIgracDownload", Component: standardButtons.gridIgracDownload},
 ].map(({position, ...rest}, index) => ({
     ...rest,
     position: position ?? index
@@ -202,7 +213,6 @@ export default (props = {}) => {
         toolbarItems = []
     } = props;
     return (<ButtonGroup id="featuregrid-toolbar" className="featuregrid-toolbar featuregrid-toolbar-margin">
-
         {sortBy(buttons.concat(toolbarItems), ["position"]).map(({Component}) => <Component {...props} mode={props?.mode ?? "VIEW"} disabled={props.disableToolbar} />)}
     </ButtonGroup>);
 };
