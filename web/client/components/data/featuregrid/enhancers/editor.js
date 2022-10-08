@@ -5,7 +5,7 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
 */
-
+import React from "react";
 import { isNil } from 'lodash';
 import { compose, createEventHandler, defaultProps, withHandlers, withPropsOnChange } from 'recompose';
 
@@ -26,6 +26,13 @@ import { manageFilterRendererState } from '../enhancers/filterRenderers';
 import { getFilterRenderer } from '../filterRenderers';
 import { getFormatter } from '../formatters';
 import { getConfigProp } from '../../../../utils/ConfigUtils';
+
+
+class HTMLCellFormatter extends React.Component {
+    render() {
+        return <div dangerouslySetInnerHTML={{ __html: this.props.value }} />;
+    }
+}
 
 const loadMoreFeaturesStream = $props => {
     return $props
@@ -185,6 +192,10 @@ const featuresToGrid = compose(
                                     } else {
                                         result.columns[columnIndex].name = _attribute.attribute_label;
                                         result.columns[columnIndex].order = _attribute.display_order;
+                                        result.columns[columnIndex].attribute_type = _attribute.attribute_type;
+                                        if (_attribute.attribute_type === 'html') {
+                                            result.columns[columnIndex].formatter = HTMLCellFormatter;
+                                        }
                                     }
                                 } else if (_column.name === '') {
                                     result.columns.splice(columnIndex, 1);
