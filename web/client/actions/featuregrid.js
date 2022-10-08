@@ -53,6 +53,8 @@ export const HIDE_SYNC_POPOVER = 'FEATUREGRID:HIDE_SYNC_POPOVER';
 export const UPDATE_EDITORS_OPTIONS = 'FEATUREGRID:UPDATE_EDITORS_OPTIONS';
 export const LAUNCH_UPDATE_FILTER_FUNC = 'FEATUREGRID:LAUNCH_UPDATE_FILTER_FUNC';
 export const SET_SYNC_TOOL = 'FEATUREGRID:SET_SYNC_TOOL';
+export const DOWNLOAD_IGRAC_DATA = 'FEATUREGRID:DOWNLOAD_IGRAC_DATA';
+export const FINISH_DOWNLOADING_IGRAC_DATA = 'FEATUREGRID:FINISH_DOWNLOADING_IGRAC_DATA';
 
 export const MODES = {
     EDIT: "EDIT",
@@ -349,6 +351,19 @@ export function sizeChange(size, dockProps) {
         dockProps
     };
 }
+
+export function finishDownloadingIGRACData() {
+    return {
+        type: FINISH_DOWNLOADING_IGRAC_DATA
+    };
+}
+
+export function downloadIGRACData() {
+    return {
+        type: DOWNLOAD_IGRAC_DATA
+    };
+}
+
 export const moreFeatures = (pages) => {
     return {
         type: LOAD_MORE_FEATURES,
