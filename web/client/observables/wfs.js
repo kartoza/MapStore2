@@ -17,6 +17,7 @@ import axios from '../libs/ajax';
 import { getWFSFilterData } from '../utils/FilterUtils';
 import { getCapabilitiesUrl } from '../utils/LayersUtils';
 import { interceptOGCError } from '../utils/ObservableUtils';
+import { getConfigProp } from '../utils/ConfigUtils';
 import requestBuilder from '../utils/ogc/WFS/RequestBuilder';
 
 const {getFeature, query, sortBy, propertyName} = requestBuilder({ wfsVersion: "1.1.0" });
@@ -88,6 +89,10 @@ export const getPagination = (filterObj = {}, options = {}) =>
  * @return {Observable} a stream that emits the GeoJSON or an error.
  */
 export const getJSONFeature = (searchUrl, filterObj, options = {}) => {
+    const viewParamsLocalConfig = getConfigProp('viewparams');
+    if (viewParamsLocalConfig) {
+        options.viewParams = viewParamsLocalConfig;
+    }
     const data = getWFSFilterData(filterObj, options);
 
     const urlParsedObj = urlUtil.parse(searchUrl, true);
