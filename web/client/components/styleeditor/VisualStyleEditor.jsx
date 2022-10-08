@@ -21,7 +21,8 @@ import getBlocks from './config/blocks';
 
 import {
     parseJSONStyle,
-    formatJSONStyle
+    formatJSONStyle,
+    updateExternalGraphicNode
 } from '../../utils/StyleEditorUtils';
 
 import undoable from 'redux-undo';
@@ -111,13 +112,13 @@ function validateStyle(rules) {
             status: 400
         };
     }
-    // if the image is missing in icon symbolizer is not possible to create the rule
-    const emptyImageIconSymbolizer = find(rules, ({ symbolizers = [] }) =>
-        find(symbolizers, ({ kind, image }) => kind === 'Icon' && (image === undefined || image === ''))
+    // check if the image of icons has some error
+    const imageIconSymbolizerError = find(rules, ({ symbolizers = [] }) =>
+        find(symbolizers, ({ kind, image }) => kind === 'Icon' && image?.errorId)
     );
-    if (emptyImageIconSymbolizer) {
+    if (imageIconSymbolizerError) {
         return {
-            messageId: 'styleeditor.emptyImageIconSymbolizer',
+            messageId: `styleeditor.${imageIconSymbolizerError?.symbolizers?.[0]?.image?.errorId}`,
             status: 400
         };
     }
@@ -244,7 +245,11 @@ function VisualStyleEditor({
             if (parser) {
                 return parser.writeStyle(parseJSONStyle(options.style))
                     .then((newCode) => {
-                        onChange(newCode, options.style);
+                        // This is a workaround for geostyler-sld-parser not able to identify and parse
+                        // the format of ExternalGraphic (IconSymbolizer) when image url doesn't mentions the format/extension explicitly.
+                        // An issue has been opened in library for native support of a similar feature. (Ref: https://github.com/geostyler/geostyler/issues/1453)
+                        const { parsedCode, errorObj } = updateExternalGraphicNode(options, newCode);
+                        errorObj ?  onError(errorObj) : onChange(parsedCode, options.style);
                     })
                     .catch((err) => {
                         onError({
@@ -342,7 +347,9 @@ function VisualStyleEditor({
                 bands,
                 attributes,
                 methods,
-                getColors
+                getColors,
+                format,
+                ...config
             }}
             // reverse rules order to show top rendered style
             // as first item of the list

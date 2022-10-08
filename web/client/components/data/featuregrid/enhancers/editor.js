@@ -112,19 +112,18 @@ const featuresToGrid = compose(
     ),
     withPropsOnChange(
         ["features", "newFeatures", "changes"],
-        props => {
-            const rowsResult = ({
-                rows: (props.newFeatures ? [...props.newFeatures, ...props.features] : props.features)
-                    .filter(props.focusOnEdit ? createNewAndEditingFilter(props.changes && Object.keys(props.changes).length > 0, props.newFeatures, props.changes) : () => true)
-                    .map(orig => applyAllChanges(orig, props.changes)).map(result =>
-                        ({...result,
-                            get: key => {
-                                return (key === "id" || key === "geometry" || key === "_new") ? result[key] : result.properties && result.properties[key];
-                            }
-                        }))
-            });
-            return rowsResult;
-        }),
+        props => ({
+            rows: (props.newFeatures ? [...props.newFeatures, ...props.features] : props.features)
+                .filter(props.focusOnEdit ? createNewAndEditingFilter(props.changes && Object.keys(props.changes).length > 0, props.newFeatures, props.changes) : () => true)
+                .map(orig => applyAllChanges(orig, props.changes)).map(result =>
+                    ({...result,
+                        ["_!_id_!_"]: result.id,
+                        get: key => {
+                            return (key === "geometry" || key === "_new") ? result[key] : result.properties && result.properties[key];
+                        }
+                    }))
+        })
+    ),
     withPropsOnChange(
         ["newFeatures", "changes", "focusOnEdit"],
         props => ({
@@ -236,7 +235,7 @@ const featuresToGrid = compose(
                     showCheckbox: props.mode === "EDIT",
                     selectBy: {
                         keys: {
-                            rowKey: 'id',
+                            rowKey: '_!_id_!_',
                             values: props.select.map(f => f.id)
                         }
                     },

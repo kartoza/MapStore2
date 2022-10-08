@@ -159,15 +159,15 @@ describe("test the CoordinatesEditor Panel", () => {
             {type: 'Feature',
                 geometry: {
                     type: 'Polygon',
-                    coordinates: [[10, 10], [6, 6], [6, 6]],
+                    coordinates: [[[10, 10], [6, 6], [6, 6]]],
                     textLabels: [
-                        {text: '2 m | 060° T', position: [10, 10]},
-                        {text: '3 m | 078° T', position: [6, 6]},
-                        {text: '3 m | 090° T', position: [6, 6]}]},
+                        {text: '2 m | 060°', position: [10, 10]},
+                        {text: '3 m | 078°', position: [6, 6]},
+                        {text: '3 m | 090°', position: [6, 6]}]},
                 properties: {
                     values: [{
                         value: 100,
-                        formattedValue: '10 m | 070° T',
+                        formattedValue: '10 m | 070°',
                         position: [10, 10],
                         type: 'length'
                     }]}
@@ -195,9 +195,9 @@ describe("test the CoordinatesEditor Panel", () => {
         const inputs = TestUtils.scryRenderedDOMComponentsWithTag(editor, "input");
         const labelTexts = TestUtils.scryRenderedDOMComponentsWithClass(editor, "label-texts");
         expect(labelTexts).toExist();
-        expect(labelTexts[0].innerText).toBe("2 m | 060° T");
-        expect(labelTexts[1].innerText).toBe("3 m | 078° T");
-        expect(labelTexts[2].innerText).toBe("3 m | 090° T");
+        expect(labelTexts[0].innerText).toBe("2 m | 060°");
+        expect(labelTexts[1].innerText).toBe("3 m | 078°");
+        expect(labelTexts[2].innerText).toBe("3 m | 090°");
         const submits = TestUtils.scryRenderedDOMComponentsWithClass(editor, "glyphicon-ok");
         expect(submits).toExist();
         const submit = submits[0];
@@ -271,7 +271,7 @@ describe("test the CoordinatesEditor Panel", () => {
                 properties: {
                     values: [{
                         value: 100,
-                        formattedValue: '10 m | 070° T',
+                        formattedValue: '10 m | 070°',
                         position: [10, 10],
                         type: 'length'
                     }]}
@@ -298,7 +298,7 @@ describe("test the CoordinatesEditor Panel", () => {
         expect(inputs).toExist();
         let labelTexts = TestUtils.scryRenderedDOMComponentsWithClass(editor, "label-texts");
         expect(labelTexts).toExist();
-        expect(labelTexts[1].innerText).toBe("10 m | 070° T");
+        expect(labelTexts[1].innerText).toBe("10 m | 070°");
         const submits = TestUtils.scryRenderedDOMComponentsWithClass(editor, "glyphicon-ok");
         expect(submits).toExist();
         const submit = submits[0];
@@ -828,7 +828,7 @@ describe("test the CoordinatesEditor Panel", () => {
         expect(invalidLineString).toBeTruthy();
     });
     it('CoordinatesEditor as Polygon, 5 rows, warning on invalid rows', () => {
-        const components = [{
+        let components = [{
             lat: 5,
             lon: ""
         }, {
@@ -846,15 +846,16 @@ describe("test the CoordinatesEditor Panel", () => {
             lon: ""
         }];
 
-        const editor = ReactDOM.render(
+        let editor = ReactDOM.render(
             <CoordinatesEditor
                 {...testHandlers}
                 isMouseEnterEnabled
                 isMouseLeaveEnabled
                 type="Polygon"
                 format="decimal"
-                properties={{isValidFeature: true}}
+                properties={{isValidFeature: true, disabled: true}}
                 components={components}
+                showFeatureSelector
             />, document.getElementById("container")
         );
         expect(editor).toExist();
@@ -865,5 +866,28 @@ describe("test the CoordinatesEditor Panel", () => {
         expect(buttons.length).toBe(18);
         const invalidPolygon = buttons[0].getElementsByClassName('glyphicon-exclamation-mark');
         expect(invalidPolygon).toBeTruthy();
+        const addButton = buttons[2];
+        expect(addButton.className).toContain('disabled');
+        const selectFeature = TestUtils.scryRenderedDOMComponentsWithClass(editor, "Select");
+        expect(selectFeature[0].className).toContain('is-disabled');
+        components[0] = {lat: 1, lon: 5};
+        editor = ReactDOM.render(
+            <CoordinatesEditor
+                {...testHandlers}
+                isMouseEnterEnabled
+                isMouseLeaveEnabled
+                type="Polygon"
+                format="decimal"
+                properties={{isValidFeature: true, disabled: true}}
+                components={components}
+                showFeatureSelector
+            />, document.getElementById("container")
+        );
+        // Coordinate rows
+        const formControl = TestUtils.scryRenderedDOMComponentsWithClass(editor, "form-control");
+        expect(formControl.length).toBe(10);
+        formControl.forEach((fc, i)=>
+            (i <= 7) ? expect(fc.disabled).toBe(true) : expect(fc.disabled).toBe(false));
+
     });
 });

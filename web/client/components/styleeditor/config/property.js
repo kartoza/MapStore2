@@ -263,21 +263,10 @@ const property = {
             };
         }
     }),
-    image: ({ label, key = 'image', isValid }) => ({
+    image: ({ label, key = 'image' }) => ({
         type: 'image',
         label,
-        config: {
-            isValid
-        },
-        getValue: (value = '') => {
-            return {
-                [key]: value
-            };
-        }
-    }),
-    text: ({ label, key = 'label' }) => ({
-        type: 'input',
-        label,
+        config: {},
         getValue: (value = '') => {
             return {
                 [key]: value
@@ -368,7 +357,7 @@ const property = {
             };
         }
     }),
-    select: ({ label, key = '', getOptions = () => [], selectProps, isValid }) => ({
+    select: ({ label, key = '', getOptions = () => [], selectProps, isValid, isDisabled, isVisible }) => ({
         type: 'select',
         label,
         config: {
@@ -380,7 +369,9 @@ const property = {
             return {
                 [key]: value
             };
-        }
+        },
+        isDisabled,
+        isVisible
     }),
     colorRamp: ({ label, key = '', getOptions = () => [] }) => ({
         type: 'colorRamp',
@@ -402,11 +393,15 @@ const property = {
                 classification,
                 type
             } = value;
-            const isCustomInteval = type === 'interval' || properties.method === 'customInterval';
+            const isMethodCustomInterval = properties.method === 'customInterval';
+            const isCustomInterval = type === 'interval' || isMethodCustomInterval;
             const isCustomColor = type === 'color' || properties.ramp === 'custom';
             return {
                 [key]: classification,
-                ...(isCustomInteval && { method: 'customInterval' }),
+                ...(isCustomInterval && {
+                    method: 'customInterval',
+                    methodEdit: isMethodCustomInterval ? properties.methodEdit : properties.method
+                }),
                 ...(isCustomColor && { ramp: 'custom' })
             };
         }

@@ -273,7 +273,7 @@
         background-color: @ms2-color-background;
         height: @square-btn-size;
         width: 100%;
-        padding: floor((@square-btn-size - @icon-size-md) / 2) 0;
+        padding: floor(((@square-btn-size - @icon-size-md) / 2)) 0;
 
         .toc-group-title {
             overflow: hidden;
@@ -362,7 +362,7 @@
             color: @ms2-color-text;
             background-color: @ms2-color-background;
             margin-bottom: 0;
-            padding: floor((@square-btn-size - @icon-size-md) / 2) 0;
+            padding: floor(((@square-btn-size - @icon-size-md) / 2)) 0;
 
             .toc-title {
                 overflow: hidden;
@@ -826,4 +826,35 @@
 .adjust-display {
     position: absolute;
     width: calc(100% - 5px);
+}
+
+// display form toc settings
+.ms-display-form {
+    .react-numeric-input b {
+        z-index: 0;
+    }
+}
+.ms-visibility-limits-form {
+    label {
+        font-weight: normal;
+        padding: 4px 0;
+    }
+    .ms-visibility-limits-form-title label {
+        font-weight: bold;
+    }
+    .btn-group > * {
+        display: flex;
+        align-items: center;
+    }
+    .alert {
+        margin: 0;
+        margin-top: 8px;
+    }
+}
+
+.ms-format-container {
+    display: flex;
+    .format-select {
+       width: 100%;
+    }
 }
