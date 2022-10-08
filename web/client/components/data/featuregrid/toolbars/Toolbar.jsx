@@ -6,6 +6,8 @@ import { ButtonGroup, Checkbox, Glyphicon } from 'react-bootstrap';
 import Message from '../../../I18N/Message';
 import withHint from '../enhancers/withHint';
 import TButtonComp from "./TButton";
+import { getApi } from '../../../../api/userPersistedStorage';
+
 const TButton = withHint(TButtonComp);
 const getDrawFeatureTooltip = (isDrawing, isSimpleGeom) => {
     if (isDrawing) {
@@ -198,7 +200,11 @@ export default ({
                         <Message msgId="featuregrid.toolbar.synchPopoverTitle"/>
                         <button onClick={() => {
                             if (syncPopover.showAgain) {
-                                localStorage.setItem("showPopoverSync", false);
+                                try {
+                                    getApi().setItem("showPopoverSync", false);
+                                } catch (e) {
+                                    console.error(e);
+                                }
                             }
                             events.hideSyncPopover();
                         }} className="close">

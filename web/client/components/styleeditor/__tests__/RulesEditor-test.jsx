@@ -138,6 +138,7 @@ describe('RulesEditor', () => {
         const symbolizerFields = symbolizersNode[0].querySelectorAll('.ms-symbolizer-label > span');
         expect([...symbolizerFields].map(field => field.innerHTML)).toEqual([
             'styleeditor.image',
+            'styleeditor.format',
             'styleeditor.opacity',
             'styleeditor.size',
             'styleeditor.rotation'
@@ -474,6 +475,43 @@ describe('RulesEditor', () => {
 
     });
 
+    it('should not crash the app if attributes is false', () => {
+        ReactDOM.render(
+            <RulesEditor
+                config={{
+                    attributes: false
+                }}
+                rules={[
+                    {
+                        name: 'Fill rule',
+                        ruleId: 1,
+                        symbolizers: [{
+                            symbolizerId: 1,
+                            kind: 'Fill',
+                            color: '#dddddd',
+                            fillOpacity: 1,
+                            outlineColor: '#777777',
+                            outlineWidth: 1
+                        }]
+                    }
+                ]}
+            />, document.getElementById('container'));
+        const ruleEditorNode = document.querySelector('.ms-style-rules-editor');
+        expect(ruleEditorNode).toBeTruthy();
+
+        const rulesNode = document.querySelectorAll('.ms-style-rule');
+        expect(rulesNode.length).toBe(1);
+
+        const ruleHeadNode = rulesNode[0].querySelector('.ms-style-rule-head');
+
+        const ruleHeadButtonNodes = ruleHeadNode.querySelectorAll('button');
+        expect([...ruleHeadButtonNodes].map(btn => btn.children[0].getAttribute('class'))).toEqual([
+            'glyphicon glyphicon-1-ruler',
+            'glyphicon glyphicon-trash'
+        ]);
+
+    });
+
 
     it('should render symbolizer with mark pattern', () => {
         ReactDOM.render(
@@ -596,6 +634,7 @@ describe('RulesEditor', () => {
         const symbolizerFields = symbolizersNode[0].querySelectorAll('.ms-symbolizer-label > span');
         expect([...symbolizerFields].map(field => field.innerHTML)).toEqual([
             'styleeditor.image',
+            'styleeditor.format',
             'styleeditor.size',
             'styleeditor.strokeWidth',
             'styleeditor.lineStyle',
@@ -615,30 +654,42 @@ describe('RulesEditor', () => {
     });
 
     it('should trigger on change callback', (done) => {
-        ReactDOM.render(
-            <RulesEditor
-                rules={[
-                    {
-                        name: 'Icon rule',
-                        ruleId: 1,
-                        symbolizers: [{
-                            kind: 'Icon',
-                            image: '',
-                            opacity: 1,
-                            size: 32,
-                            rotate: 0
-                        }]
-                    }
-                ]}
-                onChange={(newRules) => {
-                    try {
-                        expect(newRules[0].symbolizers[0].image).toBe('new-url');
-                    } catch (e) {
-                        done(e);
-                    }
-                    done();
-                }}
-            />, document.getElementById('container'));
+        TestUtils.act(() => {
+            const Image = global.Image;
+            global.Image = class {
+                constructor() {
+                    setTimeout(() => {
+                        this.onload(); // simulate success
+                    }, 100);
+                }
+            };
+            ReactDOM.render(
+                <RulesEditor
+                    rules={[
+                        {
+                            name: 'Icon rule',
+                            ruleId: 1,
+                            symbolizers: [{
+                                kind: 'Icon',
+                                image: 'url',
+                                opacity: 1,
+                                size: 32,
+                                rotate: 0
+                            }]
+                        }
+                    ]}
+                    onChange={(newRules) => {
+                        try {
+                            expect(newRules[0].symbolizers[0].image).toBe('new-url');
+                        } catch (e) {
+                            global.Image = Image;
+                            done(e);
+                        }
+                        global.Image = Image;
+                        done();
+                    }}
+                />, document.getElementById('container'));
+        });
         const ruleEditorNode = document.querySelector('.ms-style-rules-editor');
         expect(ruleEditorNode).toBeTruthy();
 
@@ -649,9 +700,10 @@ describe('RulesEditor', () => {
         expect(symbolizersNode.length).toBe(1);
 
         const inputNodes = symbolizersNode[0].querySelectorAll('input');
-        expect(inputNodes.length).toBe(1);
-
-        TestUtils.Simulate.change(inputNodes[0], { target: { value: 'new-url' }});
+        expect(inputNodes.length).toBe(2);
+        TestUtils.act(() => {
+            TestUtils.Simulate.change(inputNodes[0], { target: { value: 'new-url' }});
+        });
     });
 
     it('should trigger on update callback', (done) => {

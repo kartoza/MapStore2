@@ -59,6 +59,7 @@ const gridGeometryQuickFilter = state => get(find(getAttributeFilters(state), f 
 const stopFeatureInfo = state => stopGetFeatureInfoSelector(state) || isFeatureGridOpen(state) && (gridEditingSelector(state) || gridGeometryQuickFilter(state));
 
 import {getFeatureInfo} from '../api/identify';
+import { MAP_TYPE_CHANGED } from './../actions/maptype';
 
 /**
  * Recalculates pixel and geometric filter to allow also GFI emulation for WFS.
@@ -279,7 +280,7 @@ export const zoomToVisibleAreaEpic = (action$, store) =>
         .filter(() => centerToMarkerSelector(store.getState()))
         .switchMap((action) =>
             action$.ofType(LOAD_FEATURE_INFO, ERROR_FEATURE_INFO)
-                .switchMap(() => {
+                .mergeMap(() => {
                     const state = store.getState();
                     const map = mapSelector(state);
                     const mapProjection = projectionSelector(state);
@@ -431,7 +432,7 @@ export const removeMapInfoMarkerOnRemoveMapPopupEpic = (action$, {getState}) =>
 * Sets which trigger to use on the map
 */
 export const setMapTriggerEpic = (action$, store) =>
-    action$.ofType(SET_MAP_TRIGGER, MAP_CONFIG_LOADED)
+    action$.ofType(SET_MAP_TRIGGER, MAP_CONFIG_LOADED, MAP_TYPE_CHANGED)
         .switchMap(() => {
             return Rx.Observable.of(
                 mapTriggerSelector(store.getState()) === 'hover' ? registerEventListener('mousemove', 'identifyFloatingTool') : unRegisterEventListener('mousemove', 'identifyFloatingTool')

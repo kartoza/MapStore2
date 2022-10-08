@@ -515,6 +515,9 @@ export const saveLayer = (layer) => {
         dimensions: layer.dimensions || [],
         maxZoom: layer.maxZoom,
         maxNativeZoom: layer.maxNativeZoom,
+        maxResolution: layer.maxResolution,
+        minResolution: layer.minResolution,
+        disableResolutionLimits: layer.disableResolutionLimits,
         hideLoading: layer.hideLoading || false,
         handleClickOnLayer: layer.handleClickOnLayer || false,
         queryable: layer.queryable,
@@ -533,6 +536,7 @@ export const saveLayer = (layer) => {
     },
     layer.params ? { params: layer.params } : {},
     layer.credits ? { credits: layer.credits } : {},
+    layer.extendedParams ? { extendedParams: layer.extendedParams } : {},
     layer.localizedLayerStyles ? { localizedLayerStyles: layer.localizedLayerStyles } : {});
 };
 /**
@@ -671,6 +675,48 @@ export const formatCapabitiliesOptions = function(capabilities) {
 };
 export const getLayerTitle = ({title, name}, currentLocale = 'default') => title?.[currentLocale] || title?.default || title || name;
 
+/**
+ * Check if a resolution is inside of the min and max resolution limits of a layer
+ * @param {object} layer layer object
+ * @param {number} resolution resolutions of the current view
+ */
+export const isInsideResolutionsLimits = (layer, resolution) => {
+    if (layer.disableResolutionLimits) {
+        return true;
+    }
+    const minResolution = layer.minResolution || -Infinity;
+    const maxResolution = layer.maxResolution || Infinity;
+    return resolution !== undefined
+        ? resolution < maxResolution && resolution >= minResolution
+        : true;
+};
+
+/**
+ * Filter array of layers to return layers with visibility key set to true
+ * @param {Array} layers
+ * @param {Array} timelineLayers
+ * @returns {Array}
+ */
+export const visibleTimelineLayers = (layers, timelineLayers) => {
+    return layers.filter(layer => {
+        let timelineLayer = timelineLayers?.find(item => item.id === layer.id);
+        return timelineLayer?.visibility ? layer : null;
+    });
+};
+
+/**
+ * Loop through array of timeline layers to determine if any of the layers is visible
+ * @param {Array} layers
+ * @returns {boolean}
+ */
+export const isTimelineVisible = (layers)=>{
+    for (let layer of layers) {
+        if (layer?.visibility) {
+            return true;
+        }
+    }
+    return false;
+};
 
 LayersUtils = {
     getGroupByName,
@@ -681,5 +727,7 @@ LayersUtils = {
     deepChange,
     reorder: reorderFunc,
     getRegGeoserverRule,
-    findGeoServerName
+    findGeoServerName,
+    isInsideResolutionsLimits,
+    visibleTimelineLayers
 };

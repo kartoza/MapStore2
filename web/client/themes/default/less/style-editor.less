@@ -475,6 +475,9 @@ Ported to CodeMirror by Peter Kroon
         &.ms-symbolizer-value-invalid {
             outline: 1px solid @ms2-color-danger;
         }
+        &.ms-symbolizer-value-warning {
+            outline: 1px solid @ms2-color-warning;
+        }
         &.ms-symbolizer-value-disabled {
             opacity: 0.4;
         }
@@ -567,7 +570,7 @@ Ported to CodeMirror by Peter Kroon
         display: flex;
         margin: 0;
         align-items: center;
-        &>* {
+        &>*:not(.dropdown.btn-group) {
             flex: 1;
         }
         &>*+* {
