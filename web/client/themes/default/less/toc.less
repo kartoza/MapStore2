@@ -6,6 +6,13 @@
     z-index: 1022 !important;
 }
 
+.featuregrid-toolbar {
+    .toc-inline-loader {
+        margin: @padding-left-square-md;
+        .mapstore-circle-loader(@icon-size-md/10, @icon-size-md, @ms2-color-primary);
+    }
+}
+
 .mapstore-toc-head {
 
     &.toc-head-sections {
@@ -21,7 +28,9 @@
     }
 
     &.toc-head-sections-3 {
-        height: @square-btn-size * 3;
+        // height: @square-btn-size * 3;
+        height: 100%;
+        margin-bottom: 10px;
     }
 
     .toc-inline-loader {
@@ -44,7 +53,8 @@
     }
 
     .col-xs-12 {
-        height: @square-btn-size;
+        // height: @square-btn-size;
+        height: 100%;
         border-top: 1px solid @ms2-color-shade-lighter;
 
         .btn-sm {

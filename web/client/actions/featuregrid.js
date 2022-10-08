@@ -52,6 +52,8 @@ export const TOGGLE_SHOW_AGAIN_FLAG = 'FEATUREGRID:TOGGLE_SHOW_AGAIN_FLAG';
 export const HIDE_SYNC_POPOVER = 'FEATUREGRID:HIDE_SYNC_POPOVER';
 export const UPDATE_EDITORS_OPTIONS = 'FEATUREGRID:UPDATE_EDITORS_OPTIONS';
 export const LAUNCH_UPDATE_FILTER_FUNC = 'FEATUREGRID:LAUNCH_UPDATE_FILTER_FUNC';
+export const DOWNLOAD_IGRAC_DATA = 'FEATUREGRID:DOWNLOAD_IGRAC_DATA';
+export const FINISH_DOWNLOADING_IGRAC_DATA = 'FEATUREGRID:FINISH_DOWNLOADING_IGRAC_DATA';
 
 export const MODES = {
     EDIT: "EDIT",
@@ -354,6 +356,17 @@ export const moreFeatures = (pages) => {
         pages
     };
 };
+export const finishDownloadingIGRACData = () => {
+    return {
+        type: FINISH_DOWNLOADING_IGRAC_DATA
+    };
+}
+
+export const downloadIGRACData = () => {
+    return {
+        type: DOWNLOAD_IGRAC_DATA
+    };
+}
 export const activateTemporaryChanges = (activated) => ({
     type: ACTIVATE_TEMPORARY_CHANGES,
     activated
