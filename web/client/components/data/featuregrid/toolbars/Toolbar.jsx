@@ -61,7 +61,8 @@ export default ({
     showTimeSyncButton = false,
     syncPopover = { showPopoverSync: true, dockSize: "32.2%" }, mode = "VIEW",
     timeSync = false,
-    isIGRACDownloading = false
+    isIGRACDownloading = false,
+    isIGRACDownloadAllowed = false
 } = {}) => {
     return (<ButtonGroup id="featuregrid-toolbar" className="featuregrid-toolbar featuregrid-toolbar-margin">
         <TButton
@@ -229,7 +230,7 @@ export default ({
             tooltipId="featuregrid.toolbar.downloadIGRACData"
             disabled={isIGRACDownloading}
             active={!isIGRACDownloading}
-            visible={selectedCount <= 1 && mode === "VIEW"}
+            visible={selectedCount <= 1 && mode === "VIEW" && isIGRACDownloadAllowed}
             onClick={events.downloadIGRACData}
             loading={isIGRACDownloading}
             glyph="features-grid-download"/>
