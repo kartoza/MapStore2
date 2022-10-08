@@ -135,6 +135,13 @@ class DrawerMenu extends React.Component {
         return unsorted.sort((a, b) => a.position - b.position);
     };
 
+    componentDidMount() {
+        // Open the sidebar when mounted
+        setTimeout(() => {
+            this.props.toggleMenu();
+        }, 500);
+    }
+
     renderItems = () => {
         return this.getTools().map((tool, index) => {
             const Plugin = tool.panel || tool.plugin;
