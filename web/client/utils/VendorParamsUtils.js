@@ -5,12 +5,8 @@
  * This source code is licensed under the BSD-style license found in the
  * LICENSE file in the root directory of this source tree.
  */
-<<<<<<< HEAD
 import {isFilterValid, toCQLFilter} from './FilterUtils';
-=======
-const FilterUtils = require('./FilterUtils');
-const ConfigUtils = require('./ConfigUtils');
->>>>>>> 01ccb0f9b (Add view params)
+import { getConfigProp } from './ConfigUtils';
 
 /**
      * Check layer options to manipulate and manage vendor params in case of GeoServer usage.
@@ -41,7 +37,7 @@ export const optionsToVendorParams = (options = {}, extraCQLFilter = null) => {
         CQL_FILTER
     } : options.params;
 
-    const viewParamsLocalConfig = ConfigUtils.getConfigProp('viewparams');
+    const viewParamsLocalConfig = getConfigProp('viewparams');
     if (viewParamsLocalConfig) {
         const VIEWPARAMS = viewParamsLocalConfig;
         return cqlParams ? {
