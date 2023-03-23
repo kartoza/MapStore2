@@ -12,7 +12,8 @@ import {
     deleteGeometry,
     openAdvancedSearch,
     zoomAll,
-    setViewportFilter
+    setViewportFilter,
+    downloadIGRACData
 } from '../../actions/featuregrid';
 
 import { toggleSyncWms } from '../../actions/wfsquery';
@@ -41,5 +42,6 @@ export default {
     toggleSnapping: () => toggleSnapping(),
     setViewportFilter: (value) => setViewportFilter(value),
     setSnappingLayer: (layerId) => setSnappingLayer(layerId),
-    setSnappingConfig: (value, prop, pluginCfg) => setSnappingConfig(value, prop, pluginCfg)
+    setSnappingConfig: (value, prop, pluginCfg) => setSnappingConfig(value, prop, pluginCfg),
+    downloadIGRACData: () => downloadIGRACData()
 };
