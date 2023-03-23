@@ -28,6 +28,13 @@ import editors from '../editors';
 import { manageFilterRendererState } from '../enhancers/filterRenderers';
 import { getFilterRenderer } from '../filterRenderers';
 import { getFormatter } from '../formatters';
+import {getConfigProp} from "../../../../utils/ConfigUtils";
+
+class HTMLCellFormatter extends React.Component {
+    render() {
+        return <div dangerouslySetInnerHTML={{ __html: this.props.value }} />;
+    }
+}
 
 const loadMoreFeaturesStream = $props => {
     return $props
@@ -174,6 +181,42 @@ const featuresToGrid = compose(
                         getFormatter: (desc) => getFormatter(desc)
                     }))
             });
+
+            let layerAttributes = getConfigProp('layerattributes');
+            if (props.typeName) {
+                let geometryAttribute = null;
+                try {
+                    let _layerAttributes = layerAttributes[props.typeName];
+                    if (_layerAttributes) {
+                        _layerAttributes.forEach((_attribute, index) => {
+                            result.columns.forEach((_column, columnIndex) => {
+                                if (_column.name === _attribute.attribute) {
+                                    if (!_attribute.visible) {
+                                        // Remove column
+                                        result.columns.splice(columnIndex, 1);
+                                    } else {
+                                        result.columns[columnIndex].name = _attribute.attribute_label;
+                                        result.columns[columnIndex].order = _attribute.display_order;
+                                        result.columns[columnIndex].attribute_type = _attribute.attribute_type;
+                                        if (_attribute.attribute_type === 'html') {
+                                            result.columns[columnIndex].formatter = HTMLCellFormatter;
+                                        }
+                                    }
+                                } else if (_column.key === 'geometry') {
+                                    geometryAttribute = result.columns[columnIndex];
+                                    result.columns.splice(columnIndex, 1);
+                                }
+                            });
+                        });
+                        result.columns.sort((a, b) => (a.order > b.order) ? 1 : -1);
+                        if (geometryAttribute) {
+                            result.columns.unshift(geometryAttribute)
+                        }
+                    }
+                } catch (e) {
+                }
+            }
+
             return result;
         }
     ),
