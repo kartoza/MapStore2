@@ -12,7 +12,8 @@ import {
     startDrawingFeature,
     deleteGeometry,
     openAdvancedSearch,
-    zoomAll
+    zoomAll,
+    downloadIGRACData
 } from '../../actions/featuregrid';
 
 import { toggleSyncWms } from '../../actions/wfsquery';
@@ -41,5 +42,6 @@ export default {
     toggleShowAgain: () => toggleShowAgain(),
     toggleSnapping: () => toggleSnapping(),
     setSnappingLayer: (layerId) => setSnappingLayer(layerId),
-    setSnappingConfig: (value, prop, pluginCfg) => setSnappingConfig(value, prop, pluginCfg)
+    setSnappingConfig: (value, prop, pluginCfg) => setSnappingConfig(value, prop, pluginCfg),
+    downloadIGRACData: () => downloadIGRACData()
 };
