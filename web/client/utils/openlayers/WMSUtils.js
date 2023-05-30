@@ -65,6 +65,9 @@ export function wmsToOpenlayersOptions(options) {
             options.env && options.env.length &&
             options.group !== 'background' ? {ENV: generateEnvString(options.env) } : {})
     ));
+    if (options?.extendedParams?.mapLayer?.extra_params?.viewparams) {
+        result.VIEWPARAMS = options?.extendedParams?.mapLayer?.extra_params?.viewparams;
+    }
     return addAuthenticationToSLD(result, options);
 }
 
