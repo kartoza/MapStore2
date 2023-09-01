@@ -195,6 +195,7 @@ const featuresToGrid = compose(
                                         // Remove column
                                         result.columns.splice(columnIndex, 1);
                                     } else {
+                                        result.columns[columnIndex].title = _attribute.attribute_label;
                                         result.columns[columnIndex].name = _attribute.attribute_label;
                                         result.columns[columnIndex].order = _attribute.display_order;
                                         result.columns[columnIndex].attribute_type = _attribute.attribute_type;
