@@ -17,6 +17,7 @@ import ConfirmModal from '../maps/modals/ConfirmModal';
 import LayerMetadataModal from './fragments/LayerMetadataModal';
 import Message from '../I18N/Message';
 import Button from '../misc/Button';
+import { IGRAC_DOWNLOAD_URL } from "../../../../../js/plugins/IgracDownload";
 
 class Toolbar extends React.Component {
 
@@ -313,7 +314,17 @@ class Toolbar extends React.Component {
                         key="downloadTool"
                         placement="top"
                         overlay={<Tooltip id="toc-tooltip-downloadTool">{this.props.text.downloadToolTooltip}</Tooltip>}>
-                        <Button bsStyle={this.props.layerdownload.expanded ? "success" : "primary"} className="square-button-md" onClick={this.download}>
+                        <Button
+                            bsStyle={this.props.layerdownload.expanded ? "success" : "primary"} className="square-button-md"
+                            onClick={() =>{
+                                // TODO: IGRAC Specified
+                                if (this.props.selectedLayers[0].isIgracLayer) {
+                                    window.open(IGRAC_DOWNLOAD_URL, '_blank');
+                                } else {
+                                    this.download();
+                                }
+                            }}
+                        >
                             <Glyphicon glyph="download" />
                         </Button>
                     </OverlayTrigger>
