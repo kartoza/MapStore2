@@ -6,9 +6,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ControlLabel, Form, FormControl, FormGroup } from 'react-bootstrap';
-import { compose, getContext, defaultProps, withHandlers, withStateHandlers } from 'recompose';
+import {
+    compose,
+    defaultProps,
+    getContext,
+    withHandlers,
+    withStateHandlers
+} from 'recompose';
 
 
 import {getMessageById} from '../../../utils/LocaleUtils';
@@ -86,7 +92,10 @@ const enhance = compose(
             confirmPredicate: false
         }),
         {
-            setProperties: (state) => (properties) => ({properties: {...state.properties, ...properties}, confirmPredicate: true})
+            setProperties: (state) => (properties) => ({
+                properties: { ...state.properties, ...properties },
+                confirmPredicate: true
+            })
         }),
     withHandlers({
         onClick: ({setAddingMedia, setEditingMedia, editing}) => () => {
@@ -105,8 +114,65 @@ export default enhance(({
     onSave = () => {},
     messages,
     getImageDimensionsFunc
-}) => (
-    <BorderLayout
+}) => {
+    const [filerUrl, setFilerUrl] = useState(null);
+
+    // Fetch data
+    useEffect(() => {
+        if (!filerUrl) {
+            (
+                async() => {
+                    const response = await fetch('/user-filer-url/');
+                    const url = await response.json();
+                    setFilerUrl(url);
+                }
+            )();
+        }
+    }, []);
+
+    const buttons = [
+        {
+            glyph: "arrow-left",
+            tooltipId: "mediaEditor.mediaPicker.back",
+            onClick
+        }, {
+            glyph: "floppy-disk",
+            tooltipId: "mediaEditor.mediaPicker.save",
+            disabled: !properties.src || !properties.title,
+            onClick: () => {
+                getImageDimensionsFunc(properties.src,
+                    (dimensions) =>
+                        onSave({ ...properties, ...dimensions })
+                );
+            }
+        }
+    ];
+
+    if (filerUrl) {
+        // TODO: Delft Specified
+        buttons.push(
+            {
+                glyph: "folder-open",
+                tooltipId: "mediaEditor.mediaPicker.browseImage",
+                onClick: () => {
+                    let identifier = '' + new Date().getTime();
+                    window.open(filerUrl, identifier, "popup=true");
+                    window.addEventListener(
+                        'message', (event) => {
+                            if (event.source?.name === identifier) {
+                                setProperties({
+                                    ...properties,
+                                    src: event.data.url,
+                                    title: event.data.name
+                                });
+                            }
+                        }, false
+                    );
+                }
+            }
+        );
+    }
+    return <BorderLayout
         className="ms-imageForm"
         header={
             <div
@@ -126,21 +192,7 @@ export default enhance(({
                         bsStyle: "primary",
                         className: "square-button-md"
                     }}
-                    buttons={[{
-                        glyph: "arrow-left",
-                        tooltipId: "mediaEditor.mediaPicker.back",
-                        onClick
-                    }, {
-                        glyph: "floppy-disk",
-                        tooltipId: "mediaEditor.mediaPicker.save",
-                        disabled: !properties.src || !properties.title,
-                        onClick: () => {
-                            getImageDimensionsFunc(properties.src,
-                                (dimensions) =>
-                                    onSave({ ...properties, ...dimensions })
-                            );
-                        }
-                    }]} />
+                    buttons={buttons}/>
             </div>
         }>
         <Form style={{ padding: 8 }}>
@@ -164,5 +216,5 @@ export default enhance(({
                 </FormGroup>
             ))}
         </Form>
-    </BorderLayout>
-));
+    </BorderLayout>;
+});
