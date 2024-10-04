@@ -163,9 +163,16 @@ class DownloadDialog extends React.Component {
     }
     handleExport = () => {
         const {url, filterObj, downloadOptions, defaultSrs, srsList, onExport, layer, attributes, customAttributeSettings} = this.props;
-        const selectedSrs = downloadOptions && downloadOptions.selectedSrs || defaultSrs || (srsList[0] || {}).name;
-        const propertyName = getAttributesList(attributes, customAttributeSettings);
-        onExport(url || layer.url, filterObj, assign({}, downloadOptions, {selectedSrs}, {propertyName}));
+        if (downloadOptions.selectedFormat !== 'application/x-netcdf') {
+            const selectedSrs = downloadOptions && downloadOptions.selectedSrs || defaultSrs || (srsList[0] || {}).name;
+            const propertyName = getAttributesList(attributes, customAttributeSettings);
+            onExport(url || layer.url, filterObj, assign({}, downloadOptions, { selectedSrs }, { propertyName }));
+        } else {
+            const origin = (new URL(layer.url)).origin;
+            const { fromDate, toDate } = downloadOptions;
+            const downloadUrl = origin + `/geoserver/ows?request=GetCoverage&service=WCS&version=2.0.1&coverageId=${layer.name}&Format=application/x-netcdf&subset=http://www.opengis.net/def/axis/OGC/0/time("${fromDate}","${toDate}")`;
+            window.open(downloadUrl, '_blank').focus();
+        }
     }
 }
 
