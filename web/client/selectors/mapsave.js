@@ -24,6 +24,7 @@ import { layersSelector, groupsSelector } from '../selectors/layers';
 import { backgroundListSelector } from '../selectors/backgroundselector';
 import { textSearchConfigSelector, bookmarkSearchConfigSelector } from './searchconfig';
 import { customAttributesSettingsSelector } from "./featuregrid";
+import { playbackSettingsSelector } from "./playback";
 
 const customSaveHandlers = {};
 
@@ -58,7 +59,8 @@ export const basicMapOptionsToSaveSelector = createStructuredSelector({
     }),
     featureGrid: createStructuredSelector({
         attributes: customAttributesSettingsSelector
-    })
+    }),
+    playback: playbackSettingsSelector
 });
 
 export const mapOptionsToSaveSelector = (state) => {
