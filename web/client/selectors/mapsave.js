@@ -18,6 +18,7 @@ import { endValuesSupportSelector, selectedLayerSelector, snapRadioButtonEnabled
 import { layersSelector, groupsSelector } from '../selectors/layers';
 import { backgroundListSelector } from '../selectors/backgroundselector';
 import { textSearchConfigSelector, bookmarkSearchConfigSelector } from './searchconfig';
+import { playbackSettingsSelector } from "./playback";
 
 const customSaveHandlers = {};
 
@@ -48,7 +49,8 @@ export const basicMapOptionsToSaveSelector = createStructuredSelector({
         selectedLayer: selectedLayerSelector,
         endValuesSupport: endValuesSupportSelector,
         snapRadioButtonEnabled: snapRadioButtonEnabledSelector
-    })
+    }),
+    playback: playbackSettingsSelector
 });
 
 export const mapOptionsToSaveSelector = (state) => {
