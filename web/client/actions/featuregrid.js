@@ -404,3 +404,19 @@ export const setViewportFilter = (viewportFilter) => ({
     type: SET_VIEWPORT_FILTER,
     value: viewportFilter
 });
+
+// IGRAC CHANGES
+export const DOWNLOAD_IGRAC_DATA = 'FEATUREGRID:DOWNLOAD_IGRAC_DATA';
+export const FINISH_DOWNLOADING_IGRAC_DATA = 'FEATUREGRID:FINISH_DOWNLOADING_IGRAC_DATA';
+export const finishDownloadingIGRACData = () => {
+    return {
+        type: FINISH_DOWNLOADING_IGRAC_DATA
+    };
+};
+
+export const downloadIGRACData = () => {
+    return {
+        type: DOWNLOAD_IGRAC_DATA
+    };
+};
+// IGRAC CHANGES

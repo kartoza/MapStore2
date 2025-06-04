@@ -268,7 +268,15 @@ const standardButtons = {
         buttonClassName="square-button-md no-border"
         active={viewportFilter ?? pluginCfg?.filterByViewport}
         pullLeft
-    />)
+    />),
+    igracDownloadButton: ({selectedCount, mode, isIGRACDownloading, isIGRACDownloadAllowed, events = {}}) => (<TButton
+        id="grid-igrac-download"
+        keyProp="fg-grid-igrac-download"
+        tooltip="Download Data"
+        visible={selectedCount <= 1 && mode === "VIEW" && isIGRACDownloadAllowed}
+        active={!isIGRACDownloading}
+        onClick={() => events.downloadIGRACData()}
+        glyph="features-grid-download" />)
 };
 
 // standard buttons with position set to index in this array. shape {name, Component, position} is aligned with attributes expected from tools injected.
@@ -289,7 +297,8 @@ const buttons = [
     // note: `syncGridFilterToMap` needs to stay at the end of the toolbar because of a bug. The tooltip active forces this button to be at the end (see #7271)
     // so to avoid a replacement after the button closes, we need to put it at the end, until the bug is solved.
     {name: "syncGridFilterToMap", position: 1100, Component: standardButtons.syncGridFilterToMap}, // GRID
-    {name: "syncTimeParameter", Component: standardButtons.syncTimeParameter} // GRID (generic functionality not mandatory related to timeline)
+    {name: "syncTimeParameter", Component: standardButtons.syncTimeParameter}, // GRID (generic functionality not mandatory related to timeline)
+    {name: "igracDownload", position: 1500, Component: standardButtons.igracDownloadButton}
 ].map(({position, ...rest}, index) => ({
     ...rest,
     position: position ?? index

@@ -107,7 +107,9 @@ const Toolbar = connect(
         editorHeight: getDockSize,
         viewportFilter: isViewportFilterActive,
         isFilterByViewportSupported,
-        layer: selectedLayerSelector
+        layer: selectedLayerSelector,
+        isIGRACDownloading: (state) => state.featuregrid.isIGRACDownloading,
+        isIGRACDownloadAllowed: (state) => { return selectedLayerNameSelector(state).toLowerCase().includes('groundwater_well'); }
     }),
     (dispatch) => ({events: bindActionCreators(toolbarEvents, dispatch)})
 )(ToolbarComp);

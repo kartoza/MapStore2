@@ -162,6 +162,18 @@ export default class OpenlayersLayer extends React.Component {
         if (type) {
             const layerOptions = this.generateOpts(options, position, normalizeSRS(this.props.srs), securityToken, env, resolutions);
             this.layer = Layers.createLayer(type, layerOptions, this.props.map, this.props.mapId);
+
+            // // IGRAC changes
+            // if (this.layer) {
+            //     const layerSource = this.layer.getSource();
+            //     layerSource.wrapX = false;
+            //     if (typeof layerSource.wrapX_ !== "undefined") {
+            //         layerSource.wrapX_ = false;
+            //     }
+            //     this.layer.setSource(layerSource);
+            // }
+            // // End of IGRAC changes
+
             const compatible = Layers.isCompatible(type, layerOptions);
             // detached layers are layers that do not attach directly to the map
             // for this reason addLayer is not called on them
