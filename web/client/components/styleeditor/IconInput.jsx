@@ -91,46 +91,67 @@ function IconInput({
         onImgSourceChange(initialValue.current);
     }, []);
 
+    let useFilebrowser = false;
+    if (typeof filebrowser === 'function') {
+        useFilebrowser = true;
+    }
+
     return (
         <div
             className="ms-style-editor-icon-input"
             style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-            <FormGroup style={{ flex: 1 }}>
+            <FormGroup style={{ flex: 1, position: 'relative' }}>
                 <FormControl
                     style={{ paddingRight: 26 }}
                     placeholder="styleeditor.placeholderEnterImageUrl"
                     value={value}
                     debounceTime={300}
                     onChange={newImageUrl => onImgSourceChange(newImageUrl, true)} />
-            </FormGroup>
-            <div
-                style={{
-                    position: 'absolute',
-                    minWidth: 26,
-                    minHeight: 26,
-                    right: 0,
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
-                {(imageUrl && !error && !loading) && <div
-                    className="ms-style-editor-icon-input-image"
+                <div
                     style={{
                         position: 'absolute',
-                        margin: 2,
-                        width: 'calc(100% - 2px)',
-                        height: 'calc(100% - 2px)',
-                        backgroundImage: `url(${imageUrl})`,
-                        backgroundPosition: 'center',
-                        backgroundSize: 'contain'
+                        minWidth: 26,
+                        minHeight: 26,
+                        top: 0,
+                        right: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                    {(imageUrl && !error && !loading) && <div
+                        className="ms-style-editor-icon-input-image"
+                        style={{
+                            position: 'absolute',
+                            margin: 2,
+                            width: 'calc(100% - 2px)',
+                            height: 'calc(100% - 2px)',
+                            backgroundImage: `url(${imageUrl})`,
+                            backgroundPosition: 'center',
+                            backgroundSize: 'contain'
+                        }}
+                    />}
+                    {error && <Glyphicon
+                        glyph="exclamation-sign"
+                        tooltipId={`styleeditor.${error.messageId}`}
+                    />}
+                    {loading && <Loader size={20}/>}
+                </div>
+            </FormGroup>
+            {
+                useFilebrowser && <button
+                    style={{ marginLeft: "0.5rem" }}
+                    onClick={() => {
+                        // @ts-ignore
+                        filebrowser(
+                            (newImageUrl) => {
+                                onImgSourceChange(newImageUrl, true);
+                            }
+                        );
                     }}
-                />}
-                {error && <Glyphicon
-                    glyph="exclamation-sign"
-                    tooltipId={`styleeditor.${error.messageId}`}
-                />}
-                {loading && <Loader size={20}/>}
-            </div>
+                >
+                    browse
+                </button>
+            }
         </div>
     );
 }
