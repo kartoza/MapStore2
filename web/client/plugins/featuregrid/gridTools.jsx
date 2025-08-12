@@ -12,6 +12,11 @@ export default [{
     frozen: true,
     events: {
         onClick: (p, opts, describe, {crs, maxZoom} = {}) => {
+            if (describe.targetNamespace === 'groundwater') {
+                window.last = p.properties.id;
+            } else {
+                window.last = null;
+            }
             return p.geometry ? zoomToExtent(bbox(p), crs || "EPSG:4326", maxZoom) : {type: "NONE"};
         }
     },

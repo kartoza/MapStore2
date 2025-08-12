@@ -21,6 +21,14 @@ import ResponsivePanel from "../../misc/panels/ResponsivePanel";
 import { responseValidForEdit } from '../../../utils/IdentifyUtils';
 import { areLayerFeaturesEditable } from "../../../utils/FeatureGridUtils";
 
+function moveToTop(array, id) {
+    const index = array.findIndex(item => item.properties.id === id);
+    if (index > -1) {
+        const [item] = array.splice(index, 1); // remove the item
+        array.unshift(item); // put it at the start
+    }
+    return array;
+}
 /**
  * Component for rendering Identify Container inside a Dockable container
  * @memberof components.data.identify
@@ -81,6 +89,13 @@ export default props => {
     // Layer selector allows only selection of valid response's index, so target response will always be valid.
     const targetResponse = responses[index];
     const {layer} = targetResponse || {};
+
+    const isGroundwater = layer?.name.includes('groundwater:');
+    if (isGroundwater && window.last) {
+        if (responses[index]?.response?.features) {
+            responses[index].response.features = moveToTop(responses[index].response.features, window.last);
+        }
+    }
 
     let lngCorrected = null;
     if (latlng) {
@@ -203,6 +218,7 @@ export default props => {
                 </Portal>
             }
         >
+            { isGroundwater && <div style={{ padding: "0 1.5rem", marginBottom: "0.5em"}}>Number of wells selected : <span>{targetResponse?.response?.features.length}</span></div> }
             <Viewer
                 index={index}
                 setIndex={setIndex}
