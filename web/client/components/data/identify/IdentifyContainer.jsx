@@ -218,7 +218,7 @@ export default props => {
                 </Portal>
             }
         >
-            { isGroundwater && <div style={{ padding: "0 1.5rem", marginBottom: "0.5em"}}>Number of wells selected : <span>{targetResponse?.response?.features.length}</span></div> }
+            { isGroundwater && <div className="WellNumber" style={{ padding: "0 1.5rem", marginBottom: "0.5em"}}>Number of wells selected : <b>{targetResponse?.response?.features.length}</b></div> }
             <Viewer
                 index={index}
                 setIndex={setIndex}
