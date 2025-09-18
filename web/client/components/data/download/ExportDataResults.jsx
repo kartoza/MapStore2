@@ -15,6 +15,7 @@ import Loader from '../../misc/Loader';
 import Message from '../../I18N/Message';
 
 import { getLayerTitle } from '../../../utils/LayersUtils';
+import { sendEvent } from '../../../utils/GoogleAnalytics';
 
 const failButton = (
     <Button
@@ -54,7 +55,16 @@ const ExportDataResults = ({
                             </OverlayTrigger> : null}
                         {status === 'failed' && (!result || !result.msgId) ? failButton : null}
                         {status === 'completed' &&
-                            <a href={result} target="_blank" rel="noopener noreferrer">
+                            <a
+                                href={result}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => sendEvent('resource_download', {
+                                    resource_type: "dataset",
+                                    title: layerTitle,
+                                    alternate: layerName
+                                })}
+                            >
                                 <Button bsStyle="primary" bsSize="small">
                                     <Glyphicon glyph="floppy-disk"/>
                                 </Button>
