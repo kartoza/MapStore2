@@ -24,6 +24,8 @@ import MenuComp from './drawer/Menu';
 import Section from './drawer/Section';
 import Message from './locale/Message';
 import ButtonB from '../components/misc/Button';
+import resourceservice from "@js/reducers/resourceservice";
+import resourceServiceEpics from "@js/epics/resourceservice";
 
 const Button = tooltip(ButtonB);
 
@@ -187,5 +189,10 @@ export default {
             button: DrawerButton
         }
     }),
-    reducers: {}
+    epics: {
+        ...resourceServiceEpics
+    },
+    reducers: {
+        resourceservice
+    }
 };
