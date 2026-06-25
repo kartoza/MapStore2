@@ -7,6 +7,7 @@
  */
 
 import React from 'react';
+import GroundwaterViewer from '@js/components/Igrac/Viewer';
 
 import {Row} from 'react-bootstrap';
 import { get } from 'lodash';
@@ -90,12 +91,15 @@ export default props => {
     const targetResponse = responses[index];
     const {layer} = targetResponse || {};
 
-    const isGroundwater = layer?.name.includes('groundwater:');
-    if (isGroundwater && window.last) {
-        if (responses[index]?.response?.features) {
-            responses[index].response.features = moveToTop(responses[index].response.features, window.last);
-        }
+    const isGroundwater = layer?.name?.includes('groundwater:');
+    if (isGroundwater && window.last && responses[index]?.response?.features) {
+        responses[index].response.features = moveToTop(responses[index].response.features, window.last);
     }
+    const fromWellSelection = targetResponse?.layerMetadata?.fromWellSelection;
+    const featureInfo = targetResponse?.layerMetadata?.featureInfo;
+    const useGroundwaterViewer = isGroundwater
+        && featureInfo?.format === 'TEMPLATE'
+        && featureInfo?.template?.includes('<iframe');
 
     let lngCorrected = null;
     if (latlng) {
@@ -121,7 +125,7 @@ export default props => {
             url: get(layer, 'search.url')
         })
     });
-    const emptyResponses = requests.length === validator(format)?.getNoValidResponses(responses)?.length || 0;
+    const emptyResponses = !!(requests.length === validator(format)?.getNoValidResponses(responses)?.length);
     const missingResponses = requests.length - responses.length;
     const revGeocodeDisplayName = reverseGeocodeData.error ? <Message msgId="identifyRevGeocodeError"/> : reverseGeocodeData.display_name;
     return (
@@ -149,7 +153,7 @@ export default props => {
             header={[
                 <Row className="layer-select-row">
                     <div className="layer-col">
-                        <span className="identify-icon glyphicon glyphicon-1-layer"/>
+                        <span className="identify-icon glyphicon glyphicon-1-layer" style={{ marginTop: 0, height: "18px" }}/>
                         <LayerSelector
                             responses={responses}
                             index={index}
@@ -168,9 +172,9 @@ export default props => {
                         />
                     </div>
                 </Row>,
-                !disableCoordinatesRow &&
-                (<Row className="coordinates-edit-row">
-                    <span className="identify-icon glyphicon glyphicon-point"/>
+                !disableCoordinatesRow && !fromWellSelection &&
+                (<Row className="coordinates-edit-row" style={isGroundwater ? { marginBottom: 0 } : undefined}>
+                    <span className="identify-icon glyphicon glyphicon-point" style={{ marginTop: 0, height: "18px" }}/>
                     <div style={showCoordinateEditor ? {zIndex: 1} : {}} className={"coordinate-editor"}>
                         <Coordinate
                             key="coordinate-editor"
@@ -218,7 +222,6 @@ export default props => {
                 </Portal>
             }
         >
-            { isGroundwater && <div className="WellNumber" style={{ padding: "0 1.5rem", marginBottom: "0.5em"}}>Number of selected points : <b>{targetResponse?.response?.features.length}</b></div> }
             <Viewer
                 index={index}
                 setIndex={setIndex}
@@ -226,6 +229,7 @@ export default props => {
                 missingResponses={missingResponses}
                 responses={responses}
                 requests={requests}
+                viewers={useGroundwaterViewer ? GroundwaterViewer : undefined}
                 showEmptyMessageGFI={showEmptyMessageGFI}
                 disableInfoAlert={disableInfoAlert}
                 {...viewerOptions}/>
