@@ -212,7 +212,12 @@ const featuresToGrid = compose(
                                 }
                             });
                         });
-                        result.columns.sort((a, b) => (a.order > b.order) ? 1 : -1);
+                        result.columns.sort((a, b) => {
+                            if (a.order === undefined && b.order === undefined) return 0;
+                            if (a.order === undefined) return 1;
+                            if (b.order === undefined) return -1;
+                            return a.order - b.order;
+                        });
                         if (geometryAttribute) {
                             result.columns.unshift(geometryAttribute);
                         }
