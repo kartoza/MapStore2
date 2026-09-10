@@ -139,7 +139,7 @@ const ResourcesMenu = forwardRef(({
         defaultLabelId,
         options: orderOptions = [],
         variant: orderVariant,
-        align: orderAlign = 'right'
+        align: orderAlign = 'left'
     } = orderConfig || {};
 
     const selectedSort = orderOptions.find(({ value }) => query?.sort === value);
@@ -202,6 +202,13 @@ const ResourcesMenu = forwardRef(({
                         return (<Component key={name} query={query} />);
                     })}
                     {orderAlign === 'left' ? orderButtonNode : null}
+                    {!hideCardLayoutButton && <Button
+                        variant="default"
+                        onClick={handleToggleCardLayoutStyle}
+                        square
+                    >
+                        <Glyphicon glyph={cardLayoutStyle === 'grid' ? 'th-list' : 'th'} />
+                    </Button>}
                     <Text fontSize="sm" ellipsis>
                         {loading
                             ? <Spinner />
@@ -215,13 +222,6 @@ const ResourcesMenu = forwardRef(({
                     alignRight
                     target={target}
                 />
-                {!hideCardLayoutButton && <Button
-                    variant="default"
-                    onClick={handleToggleCardLayoutStyle}
-                    square
-                >
-                    <Glyphicon glyph={cardLayoutStyle === 'grid' ? 'th-list' : 'th'} />
-                </Button>}
                 {orderAlign === 'right' ? orderButtonNode : null}
             </FlexBox>
             {cardLayoutStyle === 'list' ? <ResourcesListHeader columns={columns} setColumns={setColumns} metadata={metadata}/> : null}
