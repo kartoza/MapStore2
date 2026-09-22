@@ -15,11 +15,20 @@ import tooltip from '../../../components/misc/enhancers/tooltip';
 import FlexBox from '../../../components/layout/FlexBox';
 import Text from '../../../components/layout/Text';
 
-const Icon = ({ glyph, ...props }) => {
-    return (<div {...props}><Glyphicon glyph={glyph} /></div> );
+const Icon = ({ glyph, href, ...props }) => {
+    const content = <Glyphicon glyph={glyph} />;
+    return href
+        ? (<a {...props} href={href} onClick={(event) => event.stopPropagation()}>{content}</a>)
+        : (<div {...props}>{content}</div>);
 };
 
 const IconWithTooltip = tooltip(Icon);
+
+const ImageIcon = ({ src, ...props }) => {
+    return (<div {...props}><img className="ms-resource-status-image" src={src} style={{ width: 20, height: 20 }} /></div>);
+};
+
+const ImageIconWithTooltip = tooltip(ImageIcon);
 
 const ResourceStatus = ({ statusItems = [] }) => {
 
@@ -41,6 +50,19 @@ const ResourceStatus = ({ statusItems = [] }) => {
                         <Text key={idx} fontSize="sm" className={item.variant ? `ms-${item.variant}-text` : ''} >
                             <IconWithTooltip
                                 glyph={item.glyph}
+                                href={item.href}
+                                tooltip={item.tooltip}
+                                tooltipParams={item.tooltipParams}
+                                tooltipId={item.tooltipId}
+                            />
+                        </Text>
+                    );
+                }
+                if (item.type === 'image') {
+                    return (
+                        <Text key={idx} fontSize="sm" className={item.variant ? `ms-${item.variant}-text` : ''} >
+                            <ImageIconWithTooltip
+                                src={item.src}
                                 tooltip={item.tooltip}
                                 tooltipParams={item.tooltipParams}
                                 tooltipId={item.tooltipId}
