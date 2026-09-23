@@ -130,11 +130,13 @@ const ResourceCardMetadataValue = tooltip(({
         if (isObject(value)) {
             return {
                 value: value[entry.itemValue],
+                filterValue: value[entry.itemFilterValue || entry.itemValue],
                 color: value[entry.itemColor]
             };
         }
         return {
-            value
+            value,
+            filterValue: value
         };
     };
 
@@ -143,13 +145,13 @@ const ResourceCardMetadataValue = tooltip(({
     return (
         <ALink
             {...props}
-            className={`ms-${entry.type || 'string'}${getFilterActiveClassName(entry.filter, properties.value)}`}
+            className={`ms-${entry.type || 'string'}${getFilterActiveClassName(entry.filter, properties.filterValue)}`}
             style={getTagColorVariables(properties.color)}
             fallbackComponent={entry.type === 'tag' ? 'span' : undefined}
             readOnly={readOnly}
             href={entry.filter ? formatHref({
                 query: {
-                    [entry.filter]: properties.value
+                    [entry.filter]: properties.filterValue
                 }
             }) : undefined}
         >
@@ -169,12 +171,16 @@ const ResourceCardMetadataEntry = ({
     column,
     ...props
 }) => {
+    const titleText = entry.type === 'tag'
+        ? castArray(value).map((val) => (isObject(val) ? val[entry.itemValue] : val)).filter(Boolean).join(', ')
+        : undefined;
     return (
         <Text
             key={entry.path}
             fontSize="sm"
             ellipsis={!entry.showFullContent}
             style={column?.width ? { width: `${column.width}%` } : {}}
+            title={titleText}
             {...props}
         >
             {entry.image?.value
