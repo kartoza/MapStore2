@@ -6,7 +6,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import castArray from 'lodash/castArray';
 import isNil from 'lodash/isNil';
 import omit from 'lodash/omit';
@@ -28,6 +28,7 @@ import { getFilterByField as defaultGetFilterByField, getTagColorVariables } fro
 import InputControl from './InputControl';
 import FlexBox from '../../../components/layout/FlexBox';
 import Text from '../../../components/layout/Text';
+import Button from '../../../components/layout/Button';
 
 const SelectSync = localizedProps('placeholder')(ReactSelect);
 
@@ -65,6 +66,51 @@ function Facet({
                 style={{ display: 'block', width: 0, height: 0, overflow: 'hidden', opacity: 0, padding: 0, margin: 0 }}
             />
             <Label item={item}/>
+        </div>
+    );
+}
+
+// CUSTOM-PATCH(collapsible-filter): render filters with child items (e.g. Datasets) as an accordion
+/**
+ * Filter with child items rendered as an accordion: the parent checkbox stays selectable
+ * and the arrow toggles the visibility of the child filters
+ */
+function CollapsibleFilter({
+    defaultExpanded,
+    renderChild,
+    children
+}) {
+    const [expanded, setExpanded] = useState(!!defaultExpanded);
+    return (
+        <div className="ms-filter-collapsible">
+            <FlexBox gap="sm" centerChildrenVertically>
+                <FlexBox.Fill>{children}</FlexBox.Fill>
+                <Button
+                    borderTransparent
+                    size="xs"
+                    aria-expanded={expanded}
+                    onClick={() => setExpanded(!expanded)}
+                >
+                    <Glyphicon
+                        glyph="bottom"
+                        style={{
+                            transform: expanded ? 'rotate(180deg)' : 'none',
+                            transition: 'transform 0.2s'
+                        }}
+                    />
+                </Button>
+            </FlexBox>
+            {expanded
+                ? <div
+                    style={{
+                        paddingLeft: '14px',
+                        marginLeft: '6px',
+                        borderLeft: '1px solid #ddd'
+                    }}
+                >
+                    {renderChild()}
+                </div>
+                : null}
         </div>
     );
 }
@@ -341,14 +387,27 @@ function FilterItem({
                 renderChild: filterChild
             }) : (
                 <FormGroup controlId={'ms-radio-filter-' + getFilterValue(field)}>
-                    <Checkbox
-                        type="checkbox"
-                        checked={!!active}
-                        value={getFilterValue(field)}
-                        onChange={onChangeFilterParent}>
-                        <Label item={field}/>
-                        {filterChild()}
-                    </Checkbox>
+                    {/* CUSTOM-PATCH(collapsible-filter): child filters are toggled by an arrow instead of always shown */}
+                    {field.items
+                        ? <CollapsibleFilter
+                            defaultExpanded={field.items.some(item => customFilters.includes(getFilterValue(item)))}
+                            renderChild={filterChild}
+                        >
+                            <Checkbox
+                                type="checkbox"
+                                checked={!!active}
+                                value={getFilterValue(field)}
+                                onChange={onChangeFilterParent}>
+                                <Label item={field}/>
+                            </Checkbox>
+                        </CollapsibleFilter>
+                        : <Checkbox
+                            type="checkbox"
+                            checked={!!active}
+                            value={getFilterValue(field)}
+                            onChange={onChangeFilterParent}>
+                            <Label item={field}/>
+                        </Checkbox>}
                 </FormGroup>
             );
     }
